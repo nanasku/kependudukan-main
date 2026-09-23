@@ -21,12 +21,32 @@
   <!-- Sidenav -->
   <nav class="sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white" id="sidenav-main">
     <div class="scrollbar-inner">
+
       <!-- Brand -->
-      <div class="sidenav-header align-items-center">
-        <a class="navbar-brand" href="<?php echo site_url('Bendahara');?>" role="button">
-          <img alt="Image placeholder" src="<?php echo base_url();?>/assets/img/brand/ngendrosari_admin.png">
-        </a>
+      <div class="sidenav-header d-flex align-items-center px-3 py-3">
+          <a class="navbar-brand m-0 d-flex align-items-center w-100" href="<?php echo site_url('Bendahara');?>" role="button">
+              <?php $desa = get_desa(); ?>
+              
+              <div class="logo-wrapper mr-2">
+                  <img alt="Logo Desa" 
+                      src="<?php echo base_url('assets/img/brand/'.($desa && $desa->logo ? $desa->logo : 'favicon.png')); ?>" 
+                      style="width: 45px; height: 45px; object-fit: contain;">
+              </div>
+
+              <div class="info-wrapper text-left" style="line-height: 1.2;">
+                  <div class="font-weight-bold text-dark" style="font-size: 13px;">
+                      <?php echo $desa ? $desa->nama_desa : 'Desa'; ?>
+                  </div>
+                  <div class="text-muted" style="font-size: 10px;">
+                      Kec. <?php echo $desa ? $desa->kecamatan : '-'; ?><br>
+                      <?php echo $desa ? $desa->kabupaten : '-'; ?>, 
+                      <?php echo $desa ? $desa->provinsi : '-'; ?><br>
+                      Kode Pos: <?php echo $desa ? $desa->kode_pos : '-'; ?>
+                  </div>
+              </div>
+          </a>
       </div>
+
       <div class="navbar-inner">
         <div class="collapse navbar-collapse" id="sidenav-collapse-main">
           <ul class="navbar-nav">

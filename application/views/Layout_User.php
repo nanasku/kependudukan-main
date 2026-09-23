@@ -50,6 +50,15 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           
           <!-- Navbar links -->
+
+          <ul class="navbar-nav align-items-center mr-auto">
+              <li class="nav-item">
+                  <span class="nav-link text-white">
+                      <b><?php $desa = get_desa(); echo $desa ? $desa->nama_desa : ''; ?></b>
+                  </span>
+              </li>
+          </ul>
+          
           <ul class="navbar-nav align-items-center  ml-md-auto ">
 
 

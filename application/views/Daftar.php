@@ -33,7 +33,7 @@
           <div class="card bg-secondary border-0 mb-0 opacity-10">
             <div class="card-header mb-0 bg-transparent pb-5 opacity-10">
               <div class="text-muted text-center  mt-2 mb-3 "><h1><b>DAFTAR AKUN<b></h1></div>
-              <div class="text-muted text-center mt-2 mb-0"><small>DesaDesa, Kajoran, Magelang, Jawa Tengah, 56163</small></div>
+              <div class="text-muted text-center mt-2 mb-0"><small>Desa, Kajoran, Magelang, Jawa Tengah, 56163</small></div>
               
             </div>
             <div class="card-body px-lg-5 py-lg-5 ">

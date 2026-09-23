@@ -123,6 +123,24 @@ class Masyarakat extends CI_Controller{
         $this->template->load('Layout_User','Masyarakat/Berita',$data);
     }
 
+    // ==================== DETAIL BERITA ====================
+    public function Detail_Berita($no_berita)
+    {
+        $data['berita'] = $this->M_berita->Edit_data_berita(['no_berita' => $no_berita], 'berita')->row();
+        
+        if (!$data['berita']) {
+            show_404();
+        }
+        
+        // Ambil berita lain sebagai rekomendasi (selain yang sedang dibuka)
+        $this->db->where('no_berita !=', $no_berita);
+        $this->db->order_by('no_berita', 'DESC');
+        $this->db->limit(3);
+        $data['berita_lain'] = $this->db->get('berita')->result();
+        
+        $this->template->load('Layout_User', 'Masyarakat/Detail_berita', $data);
+    }
+
     public function Visimisi(){      
         $this->template->load('Layout_User','Masyarakat/Visi');
     }
@@ -132,6 +150,22 @@ class Masyarakat extends CI_Controller{
         $this->template->load('Layout_User','Masyarakat/Event',$data);
     }
 
-
+    // ==================== DETAIL EVENT ====================
+    public function Detail_Event($no_event)
+    {
+        $data['event'] = $this->M_event->Edit_data_event(['no_event' => $no_event], 'event')->row();
+        
+        if (!$data['event']) {
+            show_404();
+        }
+        
+        // Event lain sebagai rekomendasi
+        $this->db->where('no_event !=', $no_event);
+        $this->db->order_by('no_event', 'DESC');
+        $this->db->limit(3);
+        $data['event_lain'] = $this->db->get('event')->result();
+        
+        $this->template->load('Layout_User', 'Masyarakat/Detail_event', $data);
+    }
 
 }

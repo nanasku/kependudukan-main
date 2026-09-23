@@ -105,7 +105,7 @@
               <p class="section-lead"></p>
               <div class="row">
                 <?php foreach($berita as $news) { ?>
-                  <a href="#woroworo">
+                  <a href="<?= site_url('Masyarakat/Detail_Berita/'.$news->no_berita) ?>">
                 <div class="col-12 col-md-4 col-lg-4">
                   <article class="article article-style-c">
                     <div class="card" style="width: 20rem;">
@@ -137,7 +137,7 @@
               <p class="section-lead"></p>
               <div class="row">
                 <?php foreach($event as $kegiatan) { ?>
-                  <a href="#event">
+                  <a href="<?= site_url('Masyarakat/Detail_Event/'.$kegiatan->no_event) ?>">
                 <div class="col-12 col-md-4 col-lg-4">
                   <article class="article article-style-c">
                     <div class="card" style="width: 20rem;">
