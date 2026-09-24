@@ -111,11 +111,11 @@ class Masyarakat extends CI_Controller{
         $this->template->load('Layout_User','Masyarakat/Aksi_kritik');
     }
 
-
-
-    public function Ronda(){
-        $data['ronda'] = $this->M_ronda->Tampil_ronda('ronda')->result();
-        $this->template->load('Layout_User','Masyarakat/Ronda',$data);
+    public function Ronda()
+    {
+        $data['title'] = 'Jadwal Ronda Rutin';
+        $data['ronda'] = $this->M_ronda->get_jadwal_lengkap();
+        $this->template->load('Layout_User', 'Masyarakat/Ronda', $data);
     }
 
     public function Berita(){

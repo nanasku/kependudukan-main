@@ -14,9 +14,18 @@
   <link rel="stylesheet" href="<?php echo base_url();?>/assets/vendor/nucleo/css/nucleo.css" type="text/css">
   <link rel="stylesheet" href="<?php echo base_url();?>/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css" type="text/css">
   <link rel="stylesheet" href="<?php echo base_url();?>/assets/css/argon.css?v=1.2.0" type="text/css">
+  <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/css/responsive.css" type="text/css">
 </head>
 
 <body>
+
+  <!-- Tombol Hamburger Mobile (Khusus HP) -->
+  <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button">
+      <i class="ni ni-align-left-2"></i>
+  </button>
+
+  <!-- Overlay untuk menutup sidebar di HP -->
+  <div class="sidenav-overlay" id="sidenavOverlay"></div>
 
   <!-- Sidenav -->
   <nav class="sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white" id="sidenav-main">
@@ -115,6 +124,10 @@
                   <h6 class="text-overflow m-0">Welcome!</h6>
                 </div>
                 <div class="dropdown-divider"></div>
+                <a href="<?php echo site_url('Profil/update_password');?>" class="dropdown-item">
+                    <i class="ni ni-key-25"></i>
+                    <span>Update Password</span>
+                </a>
                 <a href="<?php echo site_url('Login/Logout');?>" class="dropdown-item">
                   <i class="ni ni-user-run"></i>
                   <span>Logout</span>
@@ -155,5 +168,50 @@
   <script src="<?php echo base_url(); ?>/assets/vendor/chart.js/dist/Chart.min.js"></script>
   <script src="<?php echo base_url(); ?>/assets/vendor/chart.js/dist/Chart.extension.js"></script>
   <script src="<?php echo base_url(); ?>/assets/js/argon.js?v=1.2.0"></script>
+  
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+      var toggleBtn = document.getElementById('mobileMenuToggle');
+      var sidebar = document.querySelector('.sidenav');
+      var overlay = document.getElementById('sidenavOverlay');
+
+      if (toggleBtn && sidebar) {
+          // Buka/tutup sidebar saat tombol diklik
+          toggleBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              sidebar.classList.toggle('show-mobile');
+              if (overlay) overlay.classList.toggle('show');
+          });
+      }
+
+      // Tutup sidebar saat overlay diklik
+      if (overlay) {
+          overlay.addEventListener('click', function() {
+              sidebar.classList.remove('show-mobile');
+              overlay.classList.remove('show');
+          });
+      }
+
+      // Tutup sidebar saat link di sidebar diklik (biar langsung pindah halaman)
+      if (sidebar) {
+          sidebar.querySelectorAll('a.nav-link').forEach(function(link) {
+              link.addEventListener('click', function() {
+                  if (window.innerWidth <= 768) {
+                      sidebar.classList.remove('show-mobile');
+                      if (overlay) overlay.classList.remove('show');
+                  }
+              });
+          });
+      }
+
+      // Auto close saat resize ke desktop
+      window.addEventListener('resize', function() {
+          if (window.innerWidth > 768 && sidebar) {
+              sidebar.classList.remove('show-mobile');
+              if (overlay) overlay.classList.remove('show');
+          }
+      });
+  });
+  </script>
 </body>
 </html>

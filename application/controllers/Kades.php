@@ -74,8 +74,9 @@ class Kades extends CI_Controller{
 
 	public function Ronda()
 		{
-			$data['ronda'] = $this->M_ronda->Tampil_ronda('ronda')->result();
-			$this->template->load('Layout_Kades','Kades/Ronda',$data);
+			$data['title'] = 'Jadwal Ronda Rutin';
+			$data['ronda'] = $this->M_ronda->get_jadwal_lengkap();
+			$this->template->load('Layout_Kades', 'Kades/Ronda', $data);
 		}
 
 	public function Event()
@@ -170,6 +171,76 @@ class Kades extends CI_Controller{
 			$data['pindahan'] = $this->M_pindahan->Tampil_pindahan('pindahan')->result();
 			$this->load->view('Kades/Cetak_Pindahan',$data);
 		}
+
+	// ==================== EXPORT EXCEL ====================
+	public function Export_Excel_Ronda()
+	{
+		$ronda = $this->M_ronda->get_jadwal_lengkap();
+		
+		header("Content-Type: application/vnd.ms-excel");
+		header("Content-Disposition: attachment; filename=jadwal_ronda_" . date('Ymd') . ".xls");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+		
+		$desa = $this->db->limit(1)->get('pengaturan_desa')->row();
+		?>
+		<table border="1">
+			<thead>
+				<tr>
+					<th colspan="4" style="text-align:center; font-size:16px; font-weight:bold;">
+						JADWAL RONDA <?= strtoupper($desa ? $desa->nama_desa : 'DESA') ?>
+					</th>
+				</tr>
+				<tr>
+					<th colspan="4" style="text-align:center;">
+						<?= $desa ? $desa->kecamatan . ', ' . $desa->kabupaten . ', ' . $desa->provinsi : '' ?>
+					</th>
+				</tr>
+				<tr>
+					<th colspan="4" style="text-align:center;">
+						Dicetak: <?= date('d/m/Y H:i') ?>
+					</th>
+				</tr>
+				<tr><td colspan="4"></td></tr>
+				<tr style="background:#ddd; font-weight:bold;">
+					<th>No</th>
+					<th>Hari</th>
+					<th>Keterangan</th>
+					<th>Daftar Warga</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php $no = 1; foreach($ronda as $r): ?>
+				<tr>
+					<td valign="top"><?= $no++ ?></td>
+					<td valign="top"><?= $r->hari ?></td>
+					<td valign="top"><?= $r->keterangan ?: '-' ?></td>
+					<td valign="top">
+						<?php 
+						if (empty($r->anggota)) {
+							echo '-';
+						} else {
+							foreach($r->anggota as $a) {
+								echo "• " . $a->nama_warga . ($a->NIK ? " ({$a->NIK})" : "") . "<br>";
+							}
+						}
+						?>
+					</td>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php
+		exit;
+	}
+
+	// ==================== PRINT / PDF ====================
+	public function Print_Ronda()
+	{
+		$data['ronda'] = $this->M_ronda->get_jadwal_lengkap();
+		$data['desa'] = $this->db->limit(1)->get('pengaturan_desa')->row();
+		$this->load->view('Kades/Print_ronda', $data);
+	}
 
 
 }

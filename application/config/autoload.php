@@ -135,3 +135,5 @@ $autoload['language'] = array();
 $autoload['model'] = array();
 
 $autoload['helper'] = array('url', 'desa'); // tambahkan 'desa'
+
+$autoload['helper'] = array('url', 'desa', 'wa'); // tambahkan 'wa'

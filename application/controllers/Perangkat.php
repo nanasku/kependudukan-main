@@ -665,59 +665,116 @@ class Perangkat extends CI_Controller{
 			}
 
 
-								// FUNGSI FUNGSI BAGIAN HALAMAN ADMIN JADWAL RONDA
+	// ==================== RONDA - ADMIN ====================
 	public function Ronda()
-			{
-				$data['ronda'] = $this->M_ronda->Tampil_ronda('ronda')->result();
-				$this->template->load('Layout_Admin','admin/Ronda',$data);
-			}
-	public function Proses_Tambah_Ronda()
-			{
-				$config['upload_path']          = './gambarronda/';
-				$config['allowed_types']        = 'gif|jpg|png|PNG';
-				$config['max_size']             = 10000;
-				$config['max_width']            = 10000;
-				$config['max_height']           = 10000;
-	
-				$this->load->library('upload', $config);
-	
-				if ( ! $this->upload->do_upload('gambar'))
-				{
-					echo "Gek Raiso di UPLOAD NDESSS !!!!";
-				}
-				else
-				{
-						$gambar = $this->upload->data();//deklarasi
-						
-						$id_ronda = $this->input->post('id_ronda');//deklarasi
+	{
+		$data['title'] = 'Kelola Jadwal Ronda';
+		$data['ronda'] = $this->M_ronda->get_jadwal_lengkap();
+		
+		// Ambil semua penduduk untuk dropdown (kecuali Perangkat/Kades/Bendahara)
+		$this->db->select('NIK, nama, rt, rw, dusun, no_tlp, level');
+		$this->db->where('status_akun', 'AKTIF');
+		$this->db->order_by('nama', 'ASC');
+		$data['penduduk'] = $this->db->get('penduduk')->result();
+		
+		// Ambil daftar RT untuk filter
+		$data['list_rt'] = $this->db->order_by('rt', 'ASC')->get('rt')->result();
+		
+		$this->template->load('Layout_Admin', 'Perangkat/Ronda', $data);
+	}
 
-	
-						
-						$data_insert = array(
-							'id_ronda' => $id_ronda,
-							'gambar' => $gambar['file_name']
-						);
-	
-						$this->M_ronda->Tambah_ronda($data_insert);
-						$this->session->set_flashdata('pesan', '<div class="alert alert-success">
-													Data Kategori Berhasil Ditambah</div>');
-						redirect('Perangkat/Ronda','refresh');
-				
-				}
-	
-			}
+	// API: Ambil anggota ronda per jadwal (untuk auto-isi di modal)
+	public function Get_Anggota_Ronda($id_jadwal)
+	{
+		$anggota = $this->M_ronda->get_anggota_by_jadwal($id_jadwal);
+		echo json_encode($anggota);
+	}
 
-	public function Hapus_ronda($id_ronda)   //untuk proses hapus yang mengambil data id
-			{ 
-				$data = array('id_ronda' => $id_ronda);
-				$this->M_ronda->Hapus_data_ronda($data, 'ronda');
-				$this->session->set_flashdata('pesan', '<div class="alert alert-danger">
-											Data  Berhasil Dihapus</div>');
+	// Cek apakah warga sudah terdaftar di hari yang sama
+	public function Cek_Warga_Ronda()
+	{
+		$id_jadwal = $this->input->post('id_jadwal');
+		$NIK = $this->input->post('NIK');
+		
+		$this->db->where('id_jadwal', $id_jadwal);
+		$this->db->where('NIK', $NIK);
+		$exists = $this->db->get('ronda_anggota')->row();
+		
+		echo json_encode(['exists' => $exists ? true : false]);
+	}
 
-				redirect('Perangkat/Ronda','refresh');
-			}
+	// Simpan hari baru
+	public function Proses_Tambah_Hari_Ronda()
+	{
+		$hari = $this->input->post('hari');
+		
+		// Cek apakah hari sudah ada
+		$cek = $this->M_ronda->get_jadwal_by_hari($hari);
+		if ($cek) {
+			$this->session->set_flashdata('error', 'Hari ' . $hari . ' sudah ada di jadwal.');
+			redirect('Perangkat/Ronda');
+		}
 
+		$this->M_ronda->insert_jadwal([
+			'hari' => $hari,
+			'keterangan' => $this->input->post('keterangan')
+		]);
+		$this->session->set_flashdata('success', 'Jadwal hari ' . $hari . ' berhasil ditambahkan.');
+		redirect('Perangkat/Ronda');
+	}
 
+	// Hapus hari
+	public function Hapus_Hari_Ronda($id)
+	{
+		$this->M_ronda->delete_jadwal($id);
+		$this->session->set_flashdata('success', 'Jadwal berhasil dihapus.');
+		redirect('Perangkat/Ronda');
+	}
+
+	// Simpan anggota ronda
+	public function Proses_Tambah_Anggota_Ronda()
+	{
+		$id_jadwal = $this->input->post('id_jadwal');
+		$NIK = $this->input->post('NIK');
+
+		// Validasi: NIK wajib dipilih dari dropdown
+		if (empty($NIK)) {
+			$this->session->set_flashdata('error', 'Silakan pilih warga terlebih dahulu.');
+			redirect('Perangkat/Ronda');
+		}
+
+		// Validasi: cek duplikat di hari yang sama
+		$this->db->where('id_jadwal', $id_jadwal);
+		$this->db->where('NIK', $NIK);
+		if ($this->db->get('ronda_anggota')->row()) {
+			$this->session->set_flashdata('error', 'Warga ini sudah terdaftar di hari ini.');
+			redirect('Perangkat/Ronda');
+		}
+
+		// Ambil nama dari tabel penduduk (bukan input manual)
+		$warga = $this->db->where('NIK', $NIK)->get('penduduk')->row();
+		if (!$warga) {
+			$this->session->set_flashdata('error', 'Warga tidak ditemukan.');
+			redirect('Perangkat/Ronda');
+		}
+
+		$this->M_ronda->insert_anggota([
+			'id_jadwal'  => $id_jadwal,
+			'NIK'        => $NIK,
+			'nama_warga' => $warga->nama
+		]);
+
+		$this->session->set_flashdata('success', 'Warga ' . $warga->nama . ' berhasil ditambahkan ke jadwal ronda.');
+		redirect('Perangkat/Ronda');
+	}
+
+	// Hapus anggota
+	public function Hapus_Anggota_Ronda($id_anggota)
+	{
+		$this->M_ronda->delete_anggota($id_anggota);
+		$this->session->set_flashdata('success', 'Anggota berhasil dihapus.');
+		redirect('Perangkat/Ronda');
+	}
 
 									// FUNGSI FUNGSI BAGIAN HALAMAN ADMIN EVENT DESA
 	
@@ -830,20 +887,6 @@ class Perangkat extends CI_Controller{
 			}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&     BAGIAN FORM    &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	
 	
@@ -897,6 +940,113 @@ class Perangkat extends CI_Controller{
 			$this->template->load('Layout_Admin','admin/Form_tambah_event',$data);
 		}
 
+	// ==================== EXPORT EXCEL ====================
+	public function Export_Excel_Ronda()
+	{
+		$ronda = $this->M_ronda->get_jadwal_lengkap();
+		
+		header("Content-Type: application/vnd.ms-excel");
+		header("Content-Disposition: attachment; filename=jadwal_ronda_" . date('Ymd') . ".xls");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+		
+		$desa = $this->db->limit(1)->get('pengaturan_desa')->row();
+		?>
+		<table border="1">
+			<thead>
+				<tr>
+					<th colspan="4" style="text-align:center; font-size:16px; font-weight:bold;">
+						JADWAL RONDA <?= strtoupper($desa ? $desa->nama_desa : 'DESA') ?>
+					</th>
+				</tr>
+				<tr>
+					<th colspan="4" style="text-align:center;">
+						<?= $desa ? $desa->kecamatan . ', ' . $desa->kabupaten . ', ' . $desa->provinsi : '' ?>
+					</th>
+				</tr>
+				<tr>
+					<th colspan="4" style="text-align:center;">
+						Dicetak: <?= date('d/m/Y H:i') ?>
+					</th>
+				</tr>
+				<tr><td colspan="4"></td></tr>
+				<tr style="background:#ddd; font-weight:bold;">
+					<th>No</th>
+					<th>Hari</th>
+					<th>Keterangan</th>
+					<th>Daftar Warga</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php $no = 1; foreach($ronda as $r): ?>
+				<tr>
+					<td valign="top"><?= $no++ ?></td>
+					<td valign="top"><?= $r->hari ?></td>
+					<td valign="top"><?= $r->keterangan ?: '-' ?></td>
+					<td valign="top">
+						<?php 
+						if (empty($r->anggota)) {
+							echo '-';
+						} else {
+							foreach($r->anggota as $a) {
+								// ✅ Hanya tampilkan nama (tanpa NIK)
+								echo "• " . $a->nama_warga . "<br>";
+							}
+						}
+						?>
+					</td>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php
+		exit;
+	}
 
+	// ==================== PRINT / PDF ====================
+	public function Print_Ronda()
+	{
+		$data['ronda'] = $this->M_ronda->get_jadwal_lengkap();
+		$data['desa'] = $this->db->limit(1)->get('pengaturan_desa')->row();
+		$this->load->view('Kades/Print_ronda', $data);
+	}
+
+	// Kirim reminder ke seluruh warga ronda di hari tertentu
+	public function Kirim_Reminder_Ronda($id_jadwal)
+	{
+		$jadwal = $this->M_ronda->get_jadwal_by_id($id_jadwal);
+		$anggota = $this->M_ronda->get_anggota_by_jadwal_lengkap($id_jadwal);
+		$desa = $this->db->limit(1)->get('pengaturan_desa')->row();
+		
+		if (!$jadwal || empty($anggota)) {
+			$this->session->set_flashdata('error', 'Jadwal atau anggota tidak ditemukan.');
+			redirect('Perangkat/Ronda');
+		}
+		
+		// Buka tab WhatsApp satu per satu (loop)
+		// Simpan daftar link di session untuk ditampilkan
+		$this->session->set_userdata('wa_list', [
+			'jadwal' => $jadwal,
+			'anggota' => $anggota,
+			'desa' => $desa
+		]);
+		
+		redirect('Perangkat/Halaman_Reminder_WA/' . $id_jadwal);
+	}
+
+	// Halaman khusus reminder WA
+	public function Halaman_Reminder_WA($id_jadwal)
+	{
+		$jadwal = $this->M_ronda->get_jadwal_by_id($id_jadwal);
+		$anggota = $this->M_ronda->get_anggota_by_jadwal_lengkap($id_jadwal);
+		$desa = $this->db->limit(1)->get('pengaturan_desa')->row();
+		
+		$data['title'] = 'Kirim Reminder Ronda';
+		$data['jadwal'] = $jadwal;
+		$data['anggota'] = $anggota;
+		$data['desa'] = $desa;
+		
+		$this->template->load('Layout_Admin', 'Perangkat/Reminder_wa', $data);
+	}
 
 }

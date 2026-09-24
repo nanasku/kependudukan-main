@@ -223,7 +223,27 @@ CREATE TABLE `penduduk` (
 
 /*Data for the table `penduduk` */
 
-insert  into `penduduk`(`NIK`,`nama`,`tempat_lahir`,`tanggal_lahir`,`gender`,`agama`,`pendidikan`,`pekerjaan`,`status`,`nama_ayah`,`nama_ibu`,`kewarganegaraan`,`golongan_darah`,`no_tlp`,`rt`,`rw`,`dusun`,`password`,`level`,`status_akun`) values ('00000000','dika','NTT','2022-01-07','Pria','Islam','SMA','Belum Bekerja','Belum Kawin','suyanto','jamilah','WNI','A','4234234233','001','001','Bantengan','123','Masyarakat','AKTIF'),('0334666768965','Dhika','Tangerang','2008-06-10','Pria','Islam','SMA','Pelajar','Belum Kawin','Dewanto','Sunarsih','WNI','-','08234567654','003','003','Pranan','123','Masyarakat','AKTIF'),('0987789065433456','dika','Tulungagung','2021-12-24','Pria','Islam','SMA','Mahhasiswa','Kawin','Suyatno','Romiyah','WNI','A','085000000000','004','003','Bantengan','123','Masyarakat','AKTIF'),('1234123412341234','Waldii','NTT','2021-12-07','Pria','Islam','SMA','Mahhasiswa','Belum Kawin','Agus Maulana','Larasati','WNI','A','1234567890','002','006','Saragan','123','Masyarakat','AKTIF'),('2208123456788765','Endriono F','Yogyakarta','2021-12-07','Pria','Islam','SMA','Mahasiswa','Belum Kawin','Tiyok','Marsini','WNI','-','081234567890','010','005','Pranan','123','Kades','AKTIF'),('3302123487651243','Adam','Magelang','2001-09-01','Pria','Islam','SMA','Mahasiswa','Belum Kawin','Mustar','Napsiyah','WNI','-','081234432567','008','004','Pencar','123','Perangkat','AKTIF'),('3308123443215876','Diki Setiawan','Magelang','2021-12-02','Pria','Islam','SMA','Mahhasiswa','Belum Kawin','Maryoto','Siti Jamilah','WNI','A','085000000000','004','003','Bantengan','123','Masyarakat','AKTIF'),('3308123456780001','Bendahara RT','Magelang','1990-01-01','Pria','Islam','S1','Bendahara','Kawin','Bapak Bendahara','Ibu Bendahara','WNI','O','081234567890','001','001','Bantengan','123','Bendahara','AKTIF');
+insert  into `penduduk`(`NIK`,`nama`,`tempat_lahir`,`tanggal_lahir`,`gender`,`agama`,`pendidikan`,`pekerjaan`,`status`,`nama_ayah`,`nama_ibu`,`kewarganegaraan`,`golongan_darah`,`no_tlp`,`rt`,`rw`,`dusun`,`password`,`level`,`status_akun`) values ('00000000','dika','NTT','2022-01-07','Pria','Islam','SMA','Belum Bekerja','Belum Kawin','suyanto','jamilah','WNI','A','4234234233','001','001','Bantengan','123','Masyarakat','AKTIF'),('0334666768965','Dhika','Tangerang','2008-06-10','Pria','Islam','SMA','Pelajar','Belum Kawin','Dewanto','Sunarsih','WNI','-','08234567654','003','003','Pranan','123','Masyarakat','AKTIF'),('0987789065433456','dika','Tulungagung','2021-12-24','Pria','Islam','SMA','Mahhasiswa','Kawin','Suyatno','Romiyah','WNI','A','085000000000','004','003','Bantengan','123','Masyarakat','AKTIF'),('1234123412341234','Waldii','NTT','2021-12-07','Pria','Islam','SMA','Mahhasiswa','Belum Kawin','Agus Maulana','Larasati','WNI','A','1234567890','002','006','Saragan','123','Masyarakat','AKTIF'),('2208123456788765','Endriono F','Yogyakarta','2021-12-07','Pria','Islam','SMA','Mahasiswa','Belum Kawin','Tiyok','Marsini','WNI','-','081234567890','010','005','Pranan','123','Kades','AKTIF'),('3302123487651243','Adam','Magelang','2001-09-01','Pria','Islam','SMA','Mahasiswa','Belum Kawin','Mustar','Napsiyah','WNI','-','081234432567','008','004','Pencar','1234','Perangkat','AKTIF'),('3308123443215876','Diki Setiawan','Magelang','2021-12-02','Pria','Islam','SMA','Mahhasiswa','Belum Kawin','Maryoto','Siti Jamilah','WNI','A','085000000000','004','003','Bantengan','123','Masyarakat','AKTIF'),('3308123456780001','Bendahara RT','Magelang','1990-01-01','Pria','Islam','S1','Bendahara','Kawin','Bapak Bendahara','Ibu Bendahara','WNI','O','081234567890','001','001','Bantengan','123','Bendahara','AKTIF');
+
+/*Table structure for table `pengaturan_desa` */
+
+DROP TABLE IF EXISTS `pengaturan_desa`;
+
+CREATE TABLE `pengaturan_desa` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_desa` varchar(50) NOT NULL,
+  `kecamatan` varchar(50) NOT NULL,
+  `kabupaten` varchar(50) NOT NULL,
+  `provinsi` varchar(50) NOT NULL,
+  `kode_pos` varchar(10) NOT NULL,
+  `logo` varchar(100) DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `pengaturan_desa` */
+
+insert  into `pengaturan_desa`(`id`,`nama_desa`,`kecamatan`,`kabupaten`,`provinsi`,`kode_pos`,`logo`,`updated_at`) values (1,'RT 2/8 Pbg Wetan','Purbalingga','Purbalingga','Jawa Tengah','53173','logo_desa.png','2026-09-24 15:41:36');
 
 /*Table structure for table `permohonan` */
 
@@ -261,19 +281,38 @@ CREATE TABLE `pindahan` (
 
 /*Data for the table `pindahan` */
 
-/*Table structure for table `ronda` */
+/*Table structure for table `ronda_anggota` */
 
-DROP TABLE IF EXISTS `ronda`;
+DROP TABLE IF EXISTS `ronda_anggota`;
 
-CREATE TABLE `ronda` (
-  `id_ronda` int(11) NOT NULL AUTO_INCREMENT,
-  `gambar` varchar(100) NOT NULL,
-  PRIMARY KEY (`id_ronda`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `ronda_anggota` (
+  `id_anggota` int(11) NOT NULL AUTO_INCREMENT,
+  `id_jadwal` int(11) NOT NULL,
+  `NIK` varchar(25) DEFAULT NULL,
+  `nama_warga` varchar(50) NOT NULL,
+  PRIMARY KEY (`id_anggota`),
+  KEY `id_jadwal` (`id_jadwal`),
+  CONSTRAINT `ronda_anggota_ibfk_1` FOREIGN KEY (`id_jadwal`) REFERENCES `ronda_jadwal` (`id_jadwal`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-/*Data for the table `ronda` */
+/*Data for the table `ronda_anggota` */
 
-insert  into `ronda`(`id_ronda`,`gambar`) values (3,'Capture.PNG');
+/*Table structure for table `ronda_jadwal` */
+
+DROP TABLE IF EXISTS `ronda_jadwal`;
+
+CREATE TABLE `ronda_jadwal` (
+  `id_jadwal` int(11) NOT NULL AUTO_INCREMENT,
+  `hari` enum('Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu') NOT NULL,
+  `keterangan` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_jadwal`),
+  UNIQUE KEY `hari` (`hari`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `ronda_jadwal` */
+
+insert  into `ronda_jadwal`(`id_jadwal`,`hari`,`keterangan`,`created_at`) values (1,'Senin','','2026-09-24 17:22:37');
 
 /*Table structure for table `rt` */
 

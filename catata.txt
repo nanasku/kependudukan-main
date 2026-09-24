@@ -1,0 +1,5 @@
+seting pada application/config/config.php
+    $config['base_url'] = 'http://192.168.1.40:8000/';
+
+cara menjalankan aplikasi adalah:
+    php -S 0.0.0.0:8000

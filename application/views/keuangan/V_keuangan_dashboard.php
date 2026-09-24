@@ -81,31 +81,6 @@
             </div>
         </div>
 
-        <!-- Menu Navigasi -->
-        <!-- <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="mb-0">Menu Keuangan</h3>
-                    </div>
-                    <div class="card-body">
-                        <a href="<?= site_url('Keuangan/transaksi/Pendapatan') ?>" class="btn btn-success">
-                            <i class="ni ni-money-coins"></i> Data Pendapatan
-                        </a>
-                        <a href="<?= site_url('Keuangan/transaksi/Pengeluaran') ?>" class="btn btn-danger">
-                            <i class="ni ni-cart"></i> Data Pengeluaran
-                        </a>
-                        <a href="<?= site_url('Keuangan/kategori') ?>" class="btn btn-info">
-                            <i class="ni ni-tag"></i> Kelola Kategori
-                        </a>
-                        <a href="<?= site_url('Keuangan/laporan') ?>" class="btn btn-warning">
-                            <i class="ni ni-chart-bar-32"></i> Laporan Bulanan
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
         <!-- Transaksi Terbaru -->
         <div class="row">
             <div class="col-lg-12">
